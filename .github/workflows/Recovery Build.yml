@@ -16,7 +16,7 @@ on:
         description: "Select Device Tree repository"
         required: true
         type: choice
-        default: https://github.com/AzzyC/ofox_device_xiaomi_peridot
+        default: https://github.com/sairajkandkar007/OFRP-device_xiaomi_pipa
         options:
           - https://github.com/AzzyC/ofox_device_xiaomi_peridot
           - https://gitlab.com/OrangeFox/device/peridot_new
