@@ -229,7 +229,7 @@ jobs:
           Device: ${{ env.DEVICE_NAME }}
           Target: ${{ env.BUILD_TARGET }}
           Device tree branch: ${{ env.DEVICE_TREE_BRANCH }}
-          Device tree commit: [${{ steps.devtree_commit.outputs.LATEST_COMMIT }](${{ env.DEVICE_TREE_URL }}/tree/${{ steps.devtree_commit.outputs.LATEST_COMMIT }})
+          Device tree commit: [${{ steps.devtree_commit.outputs.LATEST_COMMIT }}](${{ env.DEVICE_TREE_URL }}/tree/${{ steps.devtree_commit.outputs.LATEST_COMMIT }})
           bootable/recovery commit: [${{ steps.recovery_commit.outputs.RECOVERY_COMMIT }}](https://gitlab.com/OrangeFox/bootable/Recovery/tree/${{ steps.recovery_commit.outputs.RECOVERY_COMMIT }})
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -240,4 +240,4 @@ jobs:
         RELEASE_URL="https://github.com/${{ github.repository }}/releases/tag/${{ github.run_id }}"
         DEVICE_TREE_BROWSE_URL="${{ env.DEVICE_TREE_URL }}/tree/${{ steps.devtree_commit.outputs.LATEST_COMMIT }}"
         RECOVERY_BROWSE_URL="https://gitlab.com/OrangeFox/bootable/Recovery/tree/${{ steps.recovery_commit.outputs.RECOVERY_COMMIT }}"
-        /tmp/send_msg.sh "📦 *Build complete!*\n🔗 [Download]($RELEASE_URL)\n🌲 Device tree branch: \u0060${{ env.DEVICE_TREE_BRANCH }}\u0060\n🌲 Device tree commit: [${{ steps.devtree_commit.outputs.LATEST_COMMIT }]($DEVICE_TREE_BROWSE_URL)\n🔁 bootable/recovery commit: [${{ steps.recovery_commit.outputs.RECOVERY_COMMIT }]($RECOVERY_BROWSE_URL)"
+        /tmp/send_msg.sh "📦 *Build complete!*\n🔗 [Download]($RELEASE_URL)\n🌲 Device tree branch: \u0060${{ env.DEVICE_TREE_BRANCH }}\u0060\n🌲 Device tree commit: [${{ steps.devtree_commit.outputs.LATEST_COMMIT }}]($DEVICE_TREE_BROWSE_URL)\n🔁 bootable/recovery commit: [${{ steps.recovery_commit.outputs.RECOVERY_COMMIT }}]($RECOVERY_BROWSE_URL)"
