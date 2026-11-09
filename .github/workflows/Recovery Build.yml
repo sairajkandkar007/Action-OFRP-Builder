@@ -70,7 +70,7 @@ jobs:
 
     - name: Initialize workspace
       run: |
-        /tmp/send_msg.sh "🚀 *Starting OrangeFox build* for \`${{ env.DEVICE_NAME }}\` (\`${{ env.DEVICE_TREE_BRANCH }}\`)\n🔗 [View Workflow Run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+        /tmp/send_msg.sh "🚀 *Starting OrangeFox build* for \u0060${{ env.DEVICE_NAME }}\u0060 (\u0060${{ env.DEVICE_TREE_BRANCH }}\u0060)\n🔗 [View Workflow Run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})"
         mkdir workspace
         cd workspace
         echo "workspace-folder=$(pwd)" >> $GITHUB_OUTPUT
@@ -110,7 +110,7 @@ jobs:
 
     - name: Clone device tree
       run: |
-        /tmp/send_msg.sh "🌲 Cloning device tree for \`${{ env.DEVICE_NAME }}\`..."
+        /tmp/send_msg.sh "🌲 Cloning device tree for \u0060${{ env.DEVICE_NAME }}\u0060..."
         cd ${{ steps.pwd.outputs.workspace-folder }}/fox_${{ env.MANIFEST_BRANCH }}
         git clone --depth=1 ${{ env.DEVICE_TREE_URL }} -b ${{ env.DEVICE_TREE_BRANCH }} ./${{ env.DEVICE_PATH }}
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
@@ -131,9 +131,6 @@ jobs:
           exit 1
         fi
 
-        # The util-linux provider may be declared in Android.mk or Android.bp.
-        # The original duplicate-module failure already confirms that the provider exists;
-        # avoid rejecting valid Soong declarations here.
         test -d external/util-linux || {
           echo "::error::Missing external/util-linux source directory."
           exit 1
@@ -172,12 +169,20 @@ jobs:
 
     - name: Building recovery
       run: |
-        /tmp/send_msg.sh "⚙️ Starting build for \`${{ env.DEVICE_NAME }}\`..."
+        /tmp/send_msg.sh "⚙️ Starting build for \u0060${{ env.DEVICE_NAME }}\u0060..."
         cd ${{ steps.pwd.outputs.workspace-folder }}/fox_${{ env.MANIFEST_BRANCH }}
 
         set +e
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
+
+        # OrangeFox 16.0 size reduction settings.
+        # FOX_VANILLA_BUILD also selects the non-MIUI-specific build path;
+        # do not redundantly set OF_DISABLE_MIUI_SPECIFIC_FEATURES.
+        export OF_USE_LZMA_COMPRESSION=1
+        export FOX_VANILLA_BUILD=1
+        export FOX_AB_DEVICE=1
+        export FOX_DRASTIC_SIZE_REDUCTION=1
 
         if [[ "${{ inputs.build_type }}" == "None" ]]; then
           unset FOX_BUILD_TYPE
@@ -198,8 +203,11 @@ jobs:
 
         lunch twrp_pipa-bp2a-eng
 
+        echo "OrangeFox size reduction flags:"
+        env | grep -E '^(OF_USE_LZMA_COMPRESSION|FOX_VANILLA_BUILD|FOX_AB_DEVICE|FOX_DRASTIC_SIZE_REDUCTION)='
+
         if ! mka adbd ${{ env.BUILD_TARGET }}image -j$(nproc --all); then
-          /tmp/send_msg.sh "❌ Build failed for \`${{ env.DEVICE_NAME }}\` (\`${{ env.DEVICE_TREE_BRANCH }}\`)\n🔗 [View Workflow Run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+          /tmp/send_msg.sh "❌ Build failed for \u0060${{ env.DEVICE_NAME }}\u0060 (\u0060${{ env.DEVICE_TREE_BRANCH }}\u0060)\n🔗 [View Workflow Run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})"
           exit 1
         fi
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
@@ -232,7 +240,7 @@ jobs:
           Device: ${{ env.DEVICE_NAME }}
           Target: ${{ env.BUILD_TARGET }}
           Device tree branch: ${{ env.DEVICE_TREE_BRANCH }}
-          Device tree commit: [${{ steps.devtree_commit.outputs.LATEST_COMMIT }}](${{ env.DEVICE_TREE_URL }}/tree/${{ steps.devtree_commit.outputs.LATEST_COMMIT }})
+          Device tree commit: [${{ steps.devtree_commit.outputs.LATEST_COMMIT }](${{ env.DEVICE_TREE_URL }}/tree/${{ steps.devtree_commit.outputs.LATEST_COMMIT }})
           bootable/recovery commit: [${{ steps.recovery_commit.outputs.RECOVERY_COMMIT }}](https://gitlab.com/OrangeFox/bootable/Recovery/tree/${{ steps.recovery_commit.outputs.RECOVERY_COMMIT }})
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -243,4 +251,4 @@ jobs:
         RELEASE_URL="https://github.com/${{ github.repository }}/releases/tag/${{ github.run_id }}"
         DEVICE_TREE_BROWSE_URL="${{ env.DEVICE_TREE_URL }}/tree/${{ steps.devtree_commit.outputs.LATEST_COMMIT }}"
         RECOVERY_BROWSE_URL="https://gitlab.com/OrangeFox/bootable/Recovery/tree/${{ steps.recovery_commit.outputs.RECOVERY_COMMIT }}"
-        /tmp/send_msg.sh "📦 *Build complete!*\n🔗 [Download]($RELEASE_URL)\n🌲 Device tree branch: \`${{ env.DEVICE_TREE_BRANCH }}\`\n🌲 Device tree commit: [${{ steps.devtree_commit.outputs.LATEST_COMMIT }}]($DEVICE_TREE_BROWSE_URL)\n🔁 bootable/recovery commit: [${{ steps.recovery_commit.outputs.RECOVERY_COMMIT }}]($RECOVERY_BROWSE_URL)"
+        /tmp/send_msg.sh "📦 *Build complete!*\n🔗 [Download]($RELEASE_URL)\n🌲 Device tree branch: \u0060${{ env.DEVICE_TREE_BRANCH }}\u0060\n🌲 Device tree commit: [${{ steps.devtree_commit.outputs.LATEST_COMMIT }]($DEVICE_TREE_BROWSE_URL)\n🔁 bootable/recovery commit: [${{ steps.recovery_commit.outputs.RECOVERY_COMMIT }]($RECOVERY_BROWSE_URL)"
