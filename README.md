@@ -1,4 +1,4 @@
-# Build Recovery using Github Actions
+ihttps://account.xiaomi.com/fe/service/identity/authStart?sid=unlockApi&context=UbJreyzzHimkBAl2TrKJsrZUHbkhZEYxiUDCJfyJsBejTTkvKJmAw2_bqxr-lI_SFFolaJjl7iFfBmdmI8Ff-0KJgLcNjHIqo_# Build Recovery using Github Actions
 
 - Support OrangeFox, [TWRP](https://github.com/azwhikaru/Action-TWRP-Builder) is here
 - [中文说明](./README_CN.md)
@@ -58,3 +58,18 @@ For example, your username is: JohnSmith
 Can be downloaded at [Release](../../releases)
 
 File not being uploaded to Release? Please check the step 'Check the output directory before uploading' and check the file name
+
+
+
+
+
+Missing service data | Response: {'notificationUrl':
+'https://account.xiaomi.com/fe/service/identity/authStart?sid=unlockApi&context=UbJreyzzHimkBAl2TrKJsrZUHbkhZEYxiUDCJfyJsBejTTkvKJmAw2_bqxr-lI_SFFolaJjl7iFfBmdmI8Ff-0KJgLcNjHIqo_J
+vNQ2_w0IhGHbSasiSN6cP8DYR4d6R_TEcT83isJ1GaokEkYMi2ufJ81l1D9IY4aRv0Ni1lgTrJOP907oQfgthDkmCG4UnIXjF4C31e1WYbHJeJHSt4qlhCAtSwL8JhBOpY5jYPgXI7twJkjZpfIdhazTKbXzDEBsZWKNG5k2Vz6glzQeURx
+-V6fwjaZmRltzXVxGZBuCB1_eSiWC1de0kevj0bQWuN42yI20gLQVFhWTKVD-vHVS6EshZv_zse-fqTJn0HZoMTg-SkjQGFIC74Q5Ko-69Vflmd7I67KR-BiImWe96jujsPiqbC18HVrvQnke39hcIRMywPtTPYjDUmpOGWoNq6iElrhhtX
+H-fSGJMz91Z2hz_A8Cb6oLPxRAkVXEKwjXuMsYvKVi-5VMMmqMt6PSpou7H0LhQsK18GPmstWoZSaZeaaAEArtAcnt5ml2gNRekqoCxL4aFasUNbKKT2rBRgvpxSxxbARIcb1ciFAI5oK27D9MFlH0EGyNMxS66mYGJrWQEDSiUhupcIpc_
+-DfNdN-VrMjtyQulC3UgBNjg8wUIm0pXDQvLmx20S8V_UCXiEj8hgE-AncYxEqyuGIwoLNOqzUSWUFeyoXyQiNP_H9iTmFAT2jTM7CLGFK2NNvv8bNAFGB69Uiri8HUEJ3dqIwu-p8hY-mRTbiVe6E9MBu_ZUUb9lzmX64HFtjoHi0k&_lo
+cale=en', 'result': 'ok', 'code': 0, 'miDemo': 0, 'captchaUrl': None, 'description': '成功', 'location': '', 'securityStatus': 1, 'pwd': 0, 'child': 0, 'desc': '成功'}
+
+
+
