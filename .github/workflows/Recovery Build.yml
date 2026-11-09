@@ -176,13 +176,6 @@ jobs:
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
 
-        # OrangeFox 16.0 size reduction settings.
-        # FOX_VANILLA_BUILD also selects the non-MIUI-specific build path;
-        # do not redundantly set OF_DISABLE_MIUI_SPECIFIC_FEATURES.
-        export OF_USE_LZMA_COMPRESSION=1
-        export FOX_VANILLA_BUILD=1
-        export FOX_AB_DEVICE=1
-
         if [[ "${{ inputs.build_type }}" == "None" ]]; then
           unset FOX_BUILD_TYPE
         else
@@ -198,15 +191,9 @@ jobs:
           export FOX_MAINTAINER_PATCH_VERSION="${{ inputs.maintainer_patch_version }}"
         fi
 
-        # Must be the final OrangeFox size-reduction export.
-        export FOX_DRASTIC_SIZE_REDUCTION=1
-
         set -e
 
         lunch twrp_pipa-bp2a-eng
-
-        echo "OrangeFox size reduction flags:"
-        env | grep -E '^(OF_USE_LZMA_COMPRESSION|FOX_VANILLA_BUILD|FOX_AB_DEVICE|FOX_DRASTIC_SIZE_REDUCTION)='
 
         if ! mka adbd ${{ env.BUILD_TARGET }}image -j$(nproc --all); then
           /tmp/send_msg.sh "❌ Build failed for \u0060${{ env.DEVICE_NAME }}\u0060 (\u0060${{ env.DEVICE_TREE_BRANCH }}\u0060)\n🔗 [View Workflow Run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})"
