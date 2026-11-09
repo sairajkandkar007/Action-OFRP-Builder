@@ -3,34 +3,6 @@ name: Recovery Build
 on:
   workflow_dispatch:
     inputs:
-      manifest_version:
-        description: "Select OrangeFox Manifest version"
-        required: true
-        type: choice
-        default: "16.0"
-        options:
-          - "14.1"
-          - "16.0"
-
-      device_tree_url:
-        description: "Select Device Tree repository"
-        required: true
-        type: choice
-        default: https://github.com/sairajkandkar007/OFRP-device_xiaomi_pipa
-        options:
-          - https://github.com/AzzyC/ofox_device_xiaomi_peridot
-          - https://gitlab.com/OrangeFox/device/peridot_new
-
-      device_tree_branch:
-        description: "Select Device Tree branch"
-        required: true
-        default: "fox_16.0"
-        type: choice
-        options:
-          - "fox_14.1"
-          - "auto-dfe"
-          - "fox_16.0"
-
       build_type:
         description: "Select OrangeFox Build Type"
         required: true
@@ -66,12 +38,12 @@ jobs:
 
     env:
       SYNC_URL: https://gitlab.com/OrangeFox/sync.git
-      MANIFEST_BRANCH: ${{ inputs.manifest_version }}
-      DEVICE_TREE_URL: ${{ inputs.device_tree_url }}
-      DEVICE_TREE_BRANCH: ${{ inputs.device_tree_branch }}
-      DEVICE_PATH: device/xiaomi/peridot
-      DEVICE_NAME: peridot
-      BUILD_TARGET: recovery
+      MANIFEST_BRANCH: "16.0"
+      DEVICE_TREE_URL: https://github.com/sairajkandkar007/OFRP-device_xiaomi_pipa
+      DEVICE_TREE_BRANCH: fox_16.0
+      DEVICE_PATH: device/xiaomi/pipa
+      DEVICE_NAME: pipa
+      BUILD_TARGET: boot
       TELEGRAM_CHAT_ID: ${{ inputs.notification_mode == 'quiet' && '-1002917930475' || '-1001480977582' }}
       TZ: Europe/London
 
@@ -143,6 +115,30 @@ jobs:
         git clone --depth=1 ${{ env.DEVICE_TREE_URL }} -b ${{ env.DEVICE_TREE_BRANCH }} ./${{ env.DEVICE_PATH }}
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
+    - name: Fix duplicate libblkid module
+      run: |
+        cd ${{ steps.pwd.outputs.workspace-folder }}/fox_${{ env.MANIFEST_BRANCH }}
+
+        RECOVERY_MK="bootable/recovery/Android.mk"
+        test -f "$RECOVERY_MK" || { echo "::error::Missing $RECOVERY_MK"; exit 1; }
+
+        # OrangeFox 16.0 also defines libblkid in external/util-linux.
+        # Keep recovery's libblkid dependency, but stop importing its duplicate legacy module.
+        sed -i '\|$(commands_TWRP_local_path)/libblkid/Android.mk|d' "$RECOVERY_MK"
+
+        if grep -Fq '$(commands_TWRP_local_path)/libblkid/Android.mk' "$RECOVERY_MK"; then
+          echo "::error::Legacy recovery libblkid include was not removed."
+          exit 1
+        fi
+
+        if ! grep -R -nE 'LOCAL_MODULE[[:space:]]*:?=[[:space:]]*libblkid([[:space:]]|$)' external/util-linux --include='Android.mk'; then
+          echo "::error::Expected external/util-linux libblkid provider was not found."
+          exit 1
+        fi
+
+        echo "Removed duplicate bootable/recovery libblkid module include."
+      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
+
     - name: Get latest device tree commit
       id: devtree_commit
       run: |
@@ -197,11 +193,7 @@ jobs:
 
         set -e
 
-        if [[ "${{ env.MANIFEST_BRANCH }}" == *"14.1"* ]]; then
-          lunch twrp_${{ env.DEVICE_NAME }}-ap2a-eng
-        elif [[ "${{ env.MANIFEST_BRANCH }}" == *"16.0"* ]]; then
-          lunch twrp_${{ env.DEVICE_NAME }}-bp2a-eng
-        fi
+        lunch twrp_pipa-bp2a-eng
 
         if ! mka adbd ${{ env.BUILD_TARGET }}image -j$(nproc --all); then
           /tmp/send_msg.sh "❌ Build failed for \`${{ env.DEVICE_NAME }}\` (\`${{ env.DEVICE_TREE_BRANCH }}\`)\n🔗 [View Workflow Run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})"
