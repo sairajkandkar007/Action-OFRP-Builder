@@ -182,7 +182,6 @@ jobs:
         export OF_USE_LZMA_COMPRESSION=1
         export FOX_VANILLA_BUILD=1
         export FOX_AB_DEVICE=1
-        export FOX_DRASTIC_SIZE_REDUCTION=1
 
         if [[ "${{ inputs.build_type }}" == "None" ]]; then
           unset FOX_BUILD_TYPE
@@ -198,6 +197,9 @@ jobs:
 
           export FOX_MAINTAINER_PATCH_VERSION="${{ inputs.maintainer_patch_version }}"
         fi
+
+        # Must be the final OrangeFox size-reduction export.
+        export FOX_DRASTIC_SIZE_REDUCTION=1
 
         set -e
 
